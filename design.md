@@ -1,5 +1,5 @@
 #File Maker
-This bash program is going to be able to make a handful of basic files for differnt programing languages
+This bash program is going to be able to make a handful of basic files for different programing languages
 
 **Available Languages**
 - C
@@ -36,7 +36,7 @@ OPTIONS:
    - Name, Date, For, Description
 4. Copies/Creates base file for program
    - Copies stored in copy folder
-5. Adds **Footer** if nessesary
+5. Adds **Footer** if necessary
 6. Exits
 
 
@@ -62,5 +62,3 @@ $ Date: MM/DD/YY HH:MM:SS
 $ For: 
 $ Description: 
 $$$
-
-
