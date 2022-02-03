@@ -1,0 +1,5 @@
+#include <iostream>
+
+void example(){
+    std::cout << "Example Method\n"; 
+}
