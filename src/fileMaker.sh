@@ -136,7 +136,6 @@ function buildFile() {
   checkForFile $FILE
   PATHTOCOPY="$COPIESPATH/$COPYFILE"
   PATHTOHEADERCOPY="$COPIESPATH/$COPYHEADER"
-  touch $FILE
   case $ARG in
     -c|--c)
       buildCFile
@@ -237,6 +236,7 @@ function buildHeader() {
 }
 
 function buildStartFile() {
+  touch $1
   echo -e "$HEADER" > $1
   cat "$2" >> $1
 }
