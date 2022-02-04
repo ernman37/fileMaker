@@ -1,4 +1,4 @@
-#File Maker
+# File Maker
 This bash program is going to be able to make a handful of basic files for different programing languages
 
 **Available Languages**
@@ -25,7 +25,7 @@ OPTIONS:
 - m (Makefile) 
 
 
-#Process
+# Process
 
 **On-Entry**
 1. Checks if file(s) already exist
@@ -40,7 +40,7 @@ OPTIONS:
 6. Exits
 
 
-#Header
+# Header
 - Includes *Creator, Date, For, Description* 
 Creator:
 : By Who
@@ -52,7 +52,7 @@ Description:
 : Simple description of processes
 
 
-##Header Design
+## Header Design
 $
 : Comment starter for various languages
 

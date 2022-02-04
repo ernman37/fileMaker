@@ -5,17 +5,27 @@
 #   Description: 
 
 #Colors
-N='\033[0m'
+NO='\033[0m'
 R='\033[0;31m'
 G='\033[0;32m'
 O='\033[0;33m'
-BLUE='\033[0;34m'
 P='\033[0;35m'
 C='\033[0;36m'
 
 #Globals needed
+NAME=""
 FILE=""
+HEADERFILE=""
 ARG=""
+HEADER=""
+EXTENSTION=""
+HEADEREXTENSTION=""
+DATE=$(date +"%A %b %d %Y at %r")
+COPIESPATH="/Users/rionduckworth/codeProjects/bash/fileMaker/src/copies"
+COPYFILE=""
+COPYHEADER=""
+PATHTOCOPY=""
+PATHTOHEADERCOPY=""
 
 function main() {
   if [[ $# -gt 2 ]] || [[ $# -eq 0 ]];
@@ -47,30 +57,54 @@ function checkArgs() {
     case $1 in
       -c|--c)
         ARGS+=("$1")
+        EXTENSTION="c"
+        COPYFILE="c.txt"
         shift 
         ;;
       -ch|--ch)
         ARGS+=("$1")
+        EXTENSTION="c"
+        HEADEREXTENSTION="h"
+        COPYFILE="co.txt"
+        COPYHEADER="ch.txt"
         shift 
         ;;
       -C|--cpp)
         ARGS+=("$1")
+        EXTENSTION="cpp"
+        COPYFILE="cpp.txt"
         shift
         ;;
       -Ch|--cpph)
         ARGS+=("$1")
+        EXTENSTION="cpp"
+        HEADEREXTENSTION="hpp"
+        COPYFILE="cppo.txt"
+        COPYHEADER="cpph.txt"
         shift
         ;;
       -j|--java)
         ARGS+=("$1")
+        EXTENSTION="java"
+        COPYFILE="java.txt"
         shift
         ;;
       -p|--python)
         ARGS+=("$1")
+        EXTENSTION="py"
+        COPYFILE="python.txt"
         shift
         ;;
       -m|--makeFile)
         ARGS+=("$1")
+        EXTENSTION=""
+        COPYFILE="make.txt"
+        shift
+        ;;
+      -b|--bash)
+        ARGS+=("$1")
+        EXTENSTION="sh"
+        COPYFILE="bash.txt"
         shift
         ;;
       -h|--help)
@@ -90,16 +124,21 @@ function checkArgs() {
       usage $R
   fi
   ARG="${ARGS[0]}"
-  if [[ ${#POSITIONAL_ARGS[@]} -eq 0]];
+  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
   then
-    FILE="main"
+    NAME="main"
   else
-    FILE="${POSITIONAL_ARGS[0]}" 
+    NAME="${POSITIONAL_ARGS[0]}" 
   fi
 }
 
 function buildFile() {
-  case $arg in
+  FILE="$NAME.$EXTENSTION"
+  checkForFile $FILE
+  PATHTOCOPY="$COPIESPATH/$COPYFILE"
+  PATHTOHEADERCOPY="$COPIESPATH/$COPYHEADER"
+  touch $FILE
+  case $ARG in
     -c|--c)
       buildCFile
       ;;
@@ -121,58 +160,87 @@ function buildFile() {
     -m|--makeFile)
       buildMakeFile
       ;;
+    -b|--bash)
+      buildBashFile
+      ;;
   esac 
 }
 
 function buildCFile() {
-  local fileName="$FILE.c"
-  checkForFile $fileName
-
+  echoC $O "Creating C file: $FILE"
+  buildHeader '2' $FILE
+  buildStartFile $FILE $COPYFILE
+  echoC $G "Created C file: $FILE"
 }
 
 function buildCHFiles() {
-  local fileName="$FILE.c"
-  checkForFile $fileName
-  local headerFileName="$FILE.h"
-  checkForFile $headerFileName
-
+  HEADERFILE="$NAME.$HEADEREXTENSTION"
+  checkForFile $HEADERFILE
+  echoC $O "Creating C header file: $HEADERFILE"
+  buildHeader '3' $HEADERFILE
+  buildStartFile $HEADERFILE $PATHTOHEADERCOPY
+  echoC $O "Creating C file: $FILE"
+  HEADER=""
+  buildHeader '2' $FILE
+  HEADER="${HEADER}#include \"$HEADERFILE\""
+  buildStartFile $FILE $PATHTOCOPY
+  echoC $G "Created C .c and .h files for: $NAME"
 }
 
 function buildCppFile() {
-  local fileName="$FILE.cpp"
-  checkForFile $fileName
-
+  echoC $O "Creating C++ file: $FILE"
+  buildHeader '2' $FILE
+  buildStartFile $FILE $COPYFILE
+  echoC $G "Created C++ file: $FILE"
 }
 
 function buildCpphFile() {
-  FILE="$FILE.cpp"
-  checkForFile $fileName
-  FILE="$FILE.hpp"
-  checkForFile $headerFileName
 
 }
 
 function buildPythonFile() {
-  FILE="$FILE.py"
-  checkForFile $fileName
 
 }
 
 function buildJavaFile() {
-  FILE="$FILE.java"
-  checkForFile $fileName
 
 }
 
 function buildMakeFile() {
-  local fileName="Makefile"
-  checkForFile $fileName
+
 }
 
 function buildHeader() {
-
+  if [[ $1 -eq '3' ]];
+  then
+    local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
+    local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
+    HEADER="${HEADER}#ifndef ${name}_${ext}\n"
+    HEADER="${HEADER}#define ${name}_${ext}\n"
+  fi
+  local comment=""
+  if [[ $1 -eq "1" ]]; 
+  then
+    comment='#'
+  else
+    HEADER="${HEADER}/*\n"
+    comment=" *"
+  fi
+  HEADER="${HEADER}${comment}   File: $2\n"
+  HEADER="${HEADER}${comment}   Creator: Ernest M Duckworth IV\n"
+  HEADER="${HEADER}${comment}   Created: $DATE\n"
+  HEADER="${HEADER}${comment}   For: \n"
+  HEADER="${HEADER}${comment}   Description: \n"
+  if [ $1 -ne "1" ];
+  then
+    HEADER="${HEADER}*/\n"
+  fi
 }
 
+function buildStartFile() {
+  echo -e "$HEADER" > $1
+  cat "$2" >> $1
+}
 
 function checkForFile() {
   if [ -f "$1" ]; then
