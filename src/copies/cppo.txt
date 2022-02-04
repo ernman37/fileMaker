@@ -1,5 +1,7 @@
 #include <iostream>
 
+using namespace std;
+
 void example(){
-    std::cout << "Example Method\n"; 
+    cout << "Example Method\n"; 
 }

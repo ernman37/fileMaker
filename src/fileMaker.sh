@@ -26,6 +26,8 @@ COPYFILE=""
 COPYHEADER=""
 PATHTOCOPY=""
 PATHTOHEADERCOPY=""
+LANGUAGE=""
+COMMENT=""
 
 function main() {
   if [[ $# -gt 2 ]] || [[ $# -eq 0 ]];
@@ -33,7 +35,7 @@ function main() {
     usage $R
   fi
   checkArgs $@
-  buildFile
+  startBuildForFile
 }
 
 function usage() {
@@ -59,6 +61,8 @@ function checkArgs() {
         ARGS+=("$1")
         EXTENSTION="c"
         COPYFILE="c.txt"
+        LANGUAGE="C"
+        COMMENT=" *"
         shift 
         ;;
       -ch|--ch)
@@ -67,12 +71,16 @@ function checkArgs() {
         HEADEREXTENSTION="h"
         COPYFILE="co.txt"
         COPYHEADER="ch.txt"
+        LANGUAGE="C"
+        COMMENT=" *"
         shift 
         ;;
       -C|--cpp)
         ARGS+=("$1")
         EXTENSTION="cpp"
         COPYFILE="cpp.txt"
+        LANGUAGE="C++"
+        COMMENT=" *"
         shift
         ;;
       -Ch|--cpph)
@@ -81,29 +89,39 @@ function checkArgs() {
         HEADEREXTENSTION="hpp"
         COPYFILE="cppo.txt"
         COPYHEADER="cpph.txt"
+        LANGUAGE="C++"
+        COMMENT=" *"
         shift
         ;;
       -j|--java)
         ARGS+=("$1")
         EXTENSTION="java"
         COPYFILE="java.txt"
+        LANGUAGE="java"
+        COMMENT=" *"
         shift
         ;;
       -p|--python)
         ARGS+=("$1")
         EXTENSTION="py"
         COPYFILE="python.txt"
+        LANGUAGE="python"
+        COMMENT="#"
         shift
         ;;
       -m|--makeFile)
         ARGS+=("$1")
         COPYFILE="make.txt"
+        LANGUAGE="make"
+        COMMENT="#"
         shift
         ;;
       -b|--bash)
         ARGS+=("$1")
         EXTENSTION="sh"
         COPYFILE="bash.txt"
+        LANGUAGE="bash"
+        COMMENT="#"
         shift
         ;;
       -h|--help)
@@ -131,120 +149,97 @@ function checkArgs() {
   fi
 }
 
-function buildFile() {
+function startBuildForFile() {
   FILE="$NAME.$EXTENSTION"
   checkForFile $FILE
   PATHTOCOPY="$COPIESPATH/$COPYFILE"
   PATHTOHEADERCOPY="$COPIESPATH/$COPYHEADER"
   case $ARG in
     -c|--c)
-      buildCFile
+      buildBodyFile 
       ;;
     -ch|--ch)
-      buildCHFiles
+      buildHeaderFile
       ;;
     -C|--cpp)
-      buildCppFile
+      buildBodyFile 
       ;;
     -Ch|--cpph)
-      buildCpphFile
+      buildHeaderFile
       ;;
     -j|--java)
-      buildJavaFile
+      buildBodyFile "j"
       ;;
     -p|--python)
-      buildPythonFile
+      buildBodyFile 
       ;;
     -m|--makeFile)
-      buildMakeFile
+      FILE="Makefile"
+      buildBodyFile 
       ;;
     -b|--bash)
-      buildBashFile
+      HEADER="#!/bin/bash\n"
+      buildBodyFile '#'
       ;;
   esac 
 }
 
-function buildCFile() {
-  echoC $O "Creating C file: $FILE"
-  buildHeader '2' $FILE
-  buildStartFile $FILE $COPYFILE
-  echoC $G "Created C file: $FILE"
+function buildBodyFile() {
+  buildHeader $FILE
+  if [[ "$1" == 'h' ]];
+  then
+    HEADER="${HEADER}\n#include \"$HEADERFILE\""
+  fi
+  if [[ "$1" == 'j' ]];
+  then
+    HEADER="${HEADER}\nclass $NAME{"
+  fi
+  buildFile $FILE $PATHTOCOPY
+  echoC $G "Created $LANGUAGE file: $FILE"
 }
 
-function buildCHFiles() {
+function buildHeaderFile() {
   HEADERFILE="$NAME.$HEADEREXTENSTION"
   checkForFile $HEADERFILE
-  echoC $O "Creating C header file: $HEADERFILE"
-  buildHeader '3' $HEADERFILE
-  buildStartFile $HEADERFILE $PATHTOHEADERCOPY
-  echoC $O "Creating C file: $FILE"
+  buildHeader $HEADERFILE
+  local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
+  local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
+  HEADER="${HEADER}\n#ifndef ${name}_${ext}\n"
+  HEADER="${HEADER}#define ${name}_${ext}"
+  buildFile $HEADERFILE $PATHTOHEADERCOPY
+  echoC $G "Created $LANGUAGE file: $HEADERFILE"
   HEADER=""
-  buildHeader '2' $FILE
-  HEADER="${HEADER}#include \"$HEADERFILE\""
-  buildStartFile $FILE $PATHTOCOPY
-  echoC $G "Created C .c and .h files for: $NAME"
-}
-
-function buildCppFile() {
-  echoC $O "Creating C++ file: $FILE"
-  buildHeader '2' $FILE
-  buildStartFile $FILE $COPYFILE
-  echoC $G "Created C++ file: $FILE"
-}
-
-function buildCpphFile() {
-  echo "not done"
-}
-
-function buildPythonFile() {
-  echo "not done"
-}
-
-function buildJavaFile() {
-  echo "not done"
-}
-
-function buildMakeFile() {
-  echo "not done"
+  buildBodyFile 'h'
+  echoC $G "Created $LANGUAGE Header and Body files for: $NAME"
 }
 
 function buildHeader() {
-  local comment=""
-  if [[ $1 -eq "1" ]]; 
+  if [[ "$COMMENT" == " *" ]];
   then
-    comment='#'
-  else
     HEADER="${HEADER}/*\n"
-    comment=" *"
   fi
-  HEADER="${HEADER}${comment}   File: $2\n"
-  HEADER="${HEADER}${comment}   Creator: Ernest M Duckworth IV\n"
-  HEADER="${HEADER}${comment}   Created: $DATE\n"
-  HEADER="${HEADER}${comment}   For: \n"
-  HEADER="${HEADER}${comment}   Description: \n"
-  if [ $1 -ne "1" ];
+  HEADER="${HEADER}${COMMENT}   File: $1\n"
+  HEADER="${HEADER}${COMMENT}   Creator: Ernest M Duckworth IV\n"
+  HEADER="${HEADER}${COMMENT}   Created: $DATE\n"
+  HEADER="${HEADER}${COMMENT}   For: \n"
+  HEADER="${HEADER}${COMMENT}   Description:"
+  if [[ "$COMMENT" == " *" ]];
   then
-    HEADER="${HEADER}*/\n"
-  fi
-  if [[ $1 -eq '3' ]];
-  then
-    local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
-    local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
-    HEADER="${HEADER}#ifndef ${name}_${ext}\n"
-    HEADER="${HEADER}#define ${name}_${ext}\n"
+    HEADER="${HEADER}\n*/"
   fi
 }
 
-function buildStartFile() {
-  touch $1
-  echo -e "$HEADER" > $1
-  cat "$2" >> $1
+function buildFile() {
+  echo $1
+  touch "$1"
+  echo -e "$HEADER" > "$1"
+  cat "$2" >> "$1"
 }
 
 function checkForFile() {
   if [ -f "$1" ]; 
   then
-    echoErr "$1 exists"
+    echoErr "$1 already exists"
     exit 1
   fi
 }

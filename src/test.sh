@@ -23,15 +23,18 @@ LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
 function main() {
-   fileMaker.sh 
-   fileMaker.sh "-asdf" 
-   fileMaker.sh "-as" "dfs"
-   fileMaker.sh "-j" "-d" "file"
-   fileMaker.sh "-m" "file"
+   fileMaker.sh "-ch" "ex" 
+   fileMaker.sh "-Ch" "ex" 
+   fileMaker.sh "-j" "ex" 
+   fileMaker.sh "-p" "ex" 
+   fileMaker.sh "-m" "ex" 
+   fileMaker.sh "-b" "ex" 
 }
 
 function echoColor() {
    echo -e "${1}$2${NO}"
 }
+
+
 
 main
