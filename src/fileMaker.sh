@@ -12,7 +12,7 @@ O='\033[0;33m'
 P='\033[0;35m'
 C='\033[0;36m'
 
-#Globals needed
+#Globals used
 NAME=""
 FILE=""
 HEADERFILE=""
@@ -210,13 +210,6 @@ function buildMakeFile() {
 }
 
 function buildHeader() {
-  if [[ $1 -eq '3' ]];
-  then
-    local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
-    local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
-    HEADER="${HEADER}#ifndef ${name}_${ext}\n"
-    HEADER="${HEADER}#define ${name}_${ext}\n"
-  fi
   local comment=""
   if [[ $1 -eq "1" ]]; 
   then
@@ -233,6 +226,13 @@ function buildHeader() {
   if [ $1 -ne "1" ];
   then
     HEADER="${HEADER}*/\n"
+  fi
+  if [[ $1 -eq '3' ]];
+  then
+    local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
+    local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
+    HEADER="${HEADER}#ifndef ${name}_${ext}\n"
+    HEADER="${HEADER}#define ${name}_${ext}\n"
   fi
 }
 
