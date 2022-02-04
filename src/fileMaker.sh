@@ -97,7 +97,6 @@ function checkArgs() {
         ;;
       -m|--makeFile)
         ARGS+=("$1")
-        EXTENSTION=""
         COPYFILE="make.txt"
         shift
         ;;
@@ -243,7 +242,8 @@ function buildStartFile() {
 }
 
 function checkForFile() {
-  if [ -f "$1" ]; then
+  if [ -f "$1" ]; 
+  then
     echoErr "$1 exists"
     exit 1
   fi
