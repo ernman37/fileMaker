@@ -21,7 +21,11 @@ function main() {
 }
 
 function echoColor() {
-   echo -e "${1}$2${NO}"
+   echo -e "${1}$2${NOCOLOR}"
+}
+
+function echoErr() {
+   echoC $RED $1
 }
 
 main
