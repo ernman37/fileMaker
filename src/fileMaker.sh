@@ -12,8 +12,10 @@
 #            - Add base file to /src/copies
 #            - add configurment to checkArgs() function 
 
+#######################################################################
 #MODIFY PATH BELOW TO LOCAL CONFIG FILE
 CONFIG="/Users/rionduckworth/codeProjects/bash/fileMaker/src/config.sh"
+#######################################################################
 
 #Color for Output 
 NO='\033[0m'
@@ -214,7 +216,7 @@ function buildHeader() {
     HEADER="${HEADER}/*\n"
   fi
   HEADER="${HEADER}${COMMENT}   File: $1\n"
-  HEADER="${HEADER}${COMMENT}   Creator: $USER\n"
+  HEADER="${HEADER}${COMMENT}   Creator: $CREATOR\n"
   HEADER="${HEADER}${COMMENT}   Created: $DATE\n"
   HEADER="${HEADER}${COMMENT}   For: \n"
   HEADER="${HEADER}${COMMENT}   Description:"
@@ -249,9 +251,17 @@ function echoErr() {
 if [[ -f $CONFIG ]];
 then
   source $CONFIG
+  if [[ ! -d $COPIESPATH ]];
+  then
+    echoErr "Cannot find ${P} copies folder"
+    echoErr "Current copies path: ${P}$COPIESPATH"
+  fi
 else
   echoErr "Cannot find ${P}config.sh"
+  echoErr "Current config path: ${P}$CONFIG"
   exit 1
 fi
+
+
 
 main $@
