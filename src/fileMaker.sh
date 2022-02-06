@@ -1,8 +1,16 @@
 #!/bin/bash
 #   Creator: Ernest M Duckworth IV
 #   Date: Thu Feb  3 13:14:50 2022
-#   For: 
-#   Description: 
+#   For: fileMaker
+#   Description: Creates a handful of differnt "Hello World!" programs for various langauges
+#   Notes:
+#         - SET-UP
+#            - set USER MODIFY VARIABLES
+#            - OPTIONAL: set alias in .bashrc/.bash_profile/.bash_aliases/etc
+#            - run program with correct args and create files
+#         - ADDITION
+#            - Add base file to /src/copies
+#            - add configurment to checkArgs() function 
 
 #Colors
 NO='\033[0m'
@@ -10,9 +18,13 @@ R='\033[0;31m'
 G='\033[0;32m'
 O='\033[0;33m'
 P='\033[0;35m'
-C='\033[0;36m'
 
-#Globals used
+#USER MODIFY VARIABLES
+USER="Ernest M Duckworth IV"
+DATE=$(date +"%A %b %d %Y at %r")
+COPIESPATH="/Users/rionduckworth/codeProjects/bash/fileMaker/src/copies"
+
+#PROGRAM GLOBALS
 NAME=""
 FILE=""
 HEADERFILE=""
@@ -20,8 +32,6 @@ ARG=""
 HEADER=""
 EXTENSTION=""
 HEADEREXTENSTION=""
-DATE=$(date +"%A %b %d %Y at %r")
-COPIESPATH="/Users/rionduckworth/codeProjects/bash/fileMaker/src/copies"
 COPYFILE=""
 COPYHEADER=""
 PATHTOCOPY=""
@@ -150,52 +160,38 @@ function checkArgs() {
 }
 
 function startBuildForFile() {
-  FILE="$NAME.$EXTENSTION"
+  if [[ "$LANGUAGE" == "make" ]];
+  then
+    FILE="Makefile"
+  else 
+    FILE="$NAME.$EXTENSTION"
+  fi
   checkForFile $FILE
   PATHTOCOPY="$COPIESPATH/$COPYFILE"
   PATHTOHEADERCOPY="$COPIESPATH/$COPYHEADER"
-  case $ARG in
-    -c|--c)
-      buildBodyFile 
-      ;;
-    -ch|--ch)
-      buildHeaderFile
-      ;;
-    -C|--cpp)
-      buildBodyFile 
-      ;;
-    -Ch|--cpph)
-      buildHeaderFile
-      ;;
-    -j|--java)
-      buildBodyFile "j"
-      ;;
-    -p|--python)
-      buildBodyFile 
-      ;;
-    -m|--makeFile)
-      FILE="Makefile"
-      buildBodyFile 
-      ;;
-    -b|--bash)
-      HEADER="#!/bin/bash\n"
-      buildBodyFile '#'
-      ;;
-  esac 
+  if [[ "$HEADEREXTENSTION" != "" ]];
+  then
+    buildHeaderFile
+  else
+    buildBodyFile
+  fi
 }
 
 function buildBodyFile() {
+  if [[ "$LANGUAGE" == "make" ]];
+  then
+    FILE="Makefile"
+  fi
   buildHeader $FILE
-  if [[ "$1" == 'h' ]];
+  if [[ "$HEADERFILE" != '' ]];
   then
     HEADER="${HEADER}\n#include \"$HEADERFILE\""
-  fi
-  if [[ "$1" == 'j' ]];
+  elif [[ "$LANGUAGE" == 'java' ]];
   then
     HEADER="${HEADER}\nclass $NAME{"
   fi
   buildFile $FILE $PATHTOCOPY
-  echoC $G "Created $LANGUAGE file: $FILE"
+  echoC $G "Created $LANGUAGE file: ${P}$FILE"
 }
 
 function buildHeaderFile() {
@@ -209,8 +205,8 @@ function buildHeaderFile() {
   buildFile $HEADERFILE $PATHTOHEADERCOPY
   echoC $G "Created $LANGUAGE file: $HEADERFILE"
   HEADER=""
-  buildBodyFile 'h'
-  echoC $G "Created $LANGUAGE Header and Body files for: $NAME"
+  buildBodyFile
+  echoC $G "Created $LANGUAGE Header and Body files for: ${P}$NAME"
 }
 
 function buildHeader() {
@@ -219,7 +215,7 @@ function buildHeader() {
     HEADER="${HEADER}/*\n"
   fi
   HEADER="${HEADER}${COMMENT}   File: $1\n"
-  HEADER="${HEADER}${COMMENT}   Creator: Ernest M Duckworth IV\n"
+  HEADER="${HEADER}${COMMENT}   Creator: $USER\n"
   HEADER="${HEADER}${COMMENT}   Created: $DATE\n"
   HEADER="${HEADER}${COMMENT}   For: \n"
   HEADER="${HEADER}${COMMENT}   Description:"
