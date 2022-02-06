@@ -40,13 +40,13 @@ OPTIONS:
 Creator:
 - By Who
 Date: 
-- MM/DD/YYYY HH:MM:SS
+- WEEKDAY MON DAY YEAR HH:MM:SS
 For: 
 - What is its use for
 Description: 
 - Simple description of processes
 
-## Header Design
+### Header Design
 `$` = Comment starter for various languages
 
 $$$ \
