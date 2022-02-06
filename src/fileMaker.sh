@@ -12,6 +12,9 @@
 #            - Add base file to /src/copies
 #            - add configurment to checkArgs() function 
 
+#MODIFY PATH BELOW TO LOCAL CONFIG FILE
+CONFIG="/Users/rionduckworth/codeProjects/bash/fileMaker/src/config.sh"
+
 #Color for Output 
 NO='\033[0m'
 R='\033[0;31m'
@@ -19,11 +22,6 @@ G='\033[0;32m'
 O='\033[0;33m'
 P='\033[0;35m'
 B='\033[0;36m'
-
-#USER MODIFY VARIABLES
-USER="Ernest M Duckworth IV"
-DATE=$(date +"%A %b %d %Y at %r")
-COPIESPATH="/Users/rionduckworth/codeProjects/bash/fileMaker/src/copies"
 
 #PROGRAM GLOBALS
 NAME=""
@@ -247,5 +245,13 @@ function echoC() {
 function echoErr() {
    echo -e "${R}$1${NO}" >&2
 }
+
+if [[ -f $CONFIG ]];
+then
+  source $CONFIG
+else
+  echoErr "Cannot find ${P}config.sh"
+  exit 1
+fi
 
 main $@
