@@ -50,9 +50,9 @@ Description:
 `$` = Comment starter for various languages
 
 $$$
-$ Creator: USER NAME
-$ Date: MM/DD/YY HH:MM:SS
-$ For: 
-$ Description: 
+$ Creator: USER NAME \n
+$ Date: MM/DD/YY HH:MM:SS \n
+$ For: \n
+$ Description: \n
 $$$
 **Specific include statements if needed**
