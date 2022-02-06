@@ -12,12 +12,13 @@
 #            - Add base file to /src/copies
 #            - add configurment to checkArgs() function 
 
-#Colors
+#Color for Output 
 NO='\033[0m'
 R='\033[0;31m'
 G='\033[0;32m'
 O='\033[0;33m'
 P='\033[0;35m'
+B='\033[0;36m'
 
 #USER MODIFY VARIABLES
 USER="Ernest M Duckworth IV"
@@ -191,7 +192,7 @@ function buildBodyFile() {
     HEADER="${HEADER}\nclass $NAME{"
   fi
   buildFile $FILE $PATHTOCOPY
-  echoC $G "Created $LANGUAGE file: ${P}$FILE"
+  echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
 }
 
 function buildHeaderFile() {
@@ -203,10 +204,10 @@ function buildHeaderFile() {
   HEADER="${HEADER}\n#ifndef ${name}_${ext}\n"
   HEADER="${HEADER}#define ${name}_${ext}"
   buildFile $HEADERFILE $PATHTOHEADERCOPY
-  echoC $G "Created $LANGUAGE file: $HEADERFILE"
+  echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$HEADERFILE"
   HEADER=""
   buildBodyFile
-  echoC $G "Created $LANGUAGE Header and Body files for: ${P}$NAME"
+  echoC $G "Created ${B}$LANGUAGE${G} files for: ${P}$NAME"
 }
 
 function buildHeader() {
@@ -226,7 +227,6 @@ function buildHeader() {
 }
 
 function buildFile() {
-  echo $1
   touch "$1"
   echo -e "$HEADER" > "$1"
   cat "$2" >> "$1"
@@ -235,7 +235,7 @@ function buildFile() {
 function checkForFile() {
   if [ -f "$1" ]; 
   then
-    echoErr "$1 already exists"
+    echoErr "${P}$1${R} already exists"
     exit 1
   fi
 }
