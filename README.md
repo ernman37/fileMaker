@@ -11,10 +11,11 @@ Supported Languages:
 - Bash
 
 ## Set-Up
-1. Change *USER* variables in fileMaker.sh near top of program
-    1. Create *alias* if you want to use anywhere in terminal
-2. execute using `PROMPT$ ./fileMaker.sh -OPTION FILENAME`
+1. Change *USER* variables in `src/config.sh` 
+2. Change `CONFIG` variable in `src/fileMaker.sh` near the top of file to local `src/config.sh` path
+3. execute using `PROMPT$ ./fileMaker.sh -OPTION FILENAME`
     1. run `PROMPT$ ./fileMaker.sh -h` or with `--help` to see available options
+    2. Set up *alias* in `.bashrc`/`.bash_profile`/`.bash_aliases`/etc to call anywhere in terminal
 4. Enjoy and add more types of files if desired 
 
 ## Usage
