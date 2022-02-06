@@ -12,6 +12,7 @@ This bash program is going to be able to make a handful of basic files for diffe
 
 # Usage
 `./PROGRAM -OPTION FILE_NAME`
+
 OPTIONS:
 - c (c file)
 - C (c++ file)
@@ -46,9 +47,9 @@ Description:
 - Simple description of processes
 
 ## Header Design
-$: Comment starter for various languages
+`$` = Comment starter for various languages
 $$$
-$ Creator: Ernest Duckworth IV
+$ Creator: USER NAME
 $ Date: MM/DD/YY HH:MM:SS
 $ For: 
 $ Description: 
