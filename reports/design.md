@@ -49,10 +49,10 @@ Description:
 ## Header Design
 `$` = Comment starter for various languages
 
-`$$$
+$$$ \
 $ Creator: USER NAME \
 $ Date: MM/DD/YY HH:MM:SS \
 $ For: \
 $ Description: \
-$$$
+$$$ \
 **Specific include statements if needed**
