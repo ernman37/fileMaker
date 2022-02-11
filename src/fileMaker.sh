@@ -52,14 +52,22 @@ function main() {
 function usage() {
   echoErr "${1}[USAGE]: PROMPT$ fileMaker.sh -OPTION FILE_NAME"
   echoErr "${1}OPTIONS:"
-  echoErr "  ${1}-j  | --java"
-  echoErr "  ${1}-p  | --python"
-  echoErr "  ${1}-c  | --C"
-  echoErr "  ${1}-ch | --Ch"
-  echoErr "  ${1}-C  | --cpp"
-  echoErr "  ${1}-Ch | --cpph"
-  echoErr "  ${1}-m  | --makefile"
-  echoErr "  ${1}-b  | --bash"
+  echoErr "  ${1}-j   | --java"
+  echoErr "  ${1}-p   | --python"
+  echoErr "  ${1}-c   | --C"
+  echoErr "  ${1}-ch  | --Ch"
+  echoErr "  ${1}-C   | --cpp"
+  echoErr "  ${1}-Ch  | --cpph"
+  echoErr "  ${1}-m   | --makefile"
+  echoErr "  ${1}-b   | --bash"
+  echoErr "  ${1}-H   | --html"
+  echoErr "  ${1}-s   | --css"
+  echoErr "  ${1}-P   | --php"
+  echoErr "  ${1}-js  | --javascript"
+  echoErr "  ${1}-jst | --javascriptTest"
+  echoErr "  ${1}-t   | --typescript"
+  echoErr "  ${1}-tt  | --typescriptTest"
+  echoErr "  ${1}-m   | --markdown"
   exit 1
 }
 
@@ -135,6 +143,42 @@ function checkArgs() {
         COMMENT="#"
         shift
         ;;
+      -H|--html)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -s|--css)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -P|--php)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -js|--javascript)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -jst|--javascriptTest)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -t|--typescript)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -tt|--typescriptTest)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -tt|--typescriptTest)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
+      -M|--markdown)
+        echoC $R "Not Implemented"
+        exit 1
+        ;;
       -h|--help)
         usage $O
         ;;
@@ -193,6 +237,10 @@ function buildBodyFile() {
   fi
   buildFile $FILE $PATHTOCOPY
   echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
+  if [[ "$LANGUAGE" == "bash" ]];
+  then
+    chmod +x "$FILE"
+  fi
 }
 
 function buildHeaderFile() {
@@ -200,7 +248,7 @@ function buildHeaderFile() {
   checkForFile $HEADERFILE
   buildHeader $HEADERFILE
   local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
-  local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
+  local ext=$(printf '%s\n' "$HEADEREXTENSTION" | awk '{ print toupper($0) }')
   HEADER="${HEADER}\n#ifndef ${name}_${ext}\n"
   HEADER="${HEADER}#define ${name}_${ext}"
   buildFile $HEADERFILE $PATHTOHEADERCOPY
@@ -255,13 +303,12 @@ then
   then
     echoErr "Cannot find ${P} copies folder"
     echoErr "Current copies path: ${P}$COPIESPATH"
+    exit 1
   fi
 else
   echoErr "Cannot find ${P}config.sh"
   echoErr "Current config path: ${P}$CONFIG"
   exit 1
 fi
-
-
 
 main $@
