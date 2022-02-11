@@ -15,7 +15,7 @@ B='\033[0;36m'
 PROGRAM="/Users/rionduckworth/codeProjects/bash/fileMaker/src/fileMaker.sh"
 FILENAME="example"
 TESTDIR="testDir"
-OPTIONS=( "-ch" "-Ch" "-c" "-C" "-j" "-p" "-m" "-b")
+OPTIONS=( "ch" "Ch" "c" "C" "j" "p" "m" "b" "H" "s" "js" "jst" "t" "tt" "M")
 
 function main() {
    deleteIfDirExists
@@ -37,7 +37,7 @@ function testBuildAllValid() {
    echoC $O "Testing All Valid"
    for arg in "${OPTIONS[@]}"
    do
-      testProgram "$arg" 
+      testProgram "-$arg" 
    done
 }
 
