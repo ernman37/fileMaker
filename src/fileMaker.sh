@@ -26,6 +26,7 @@ P='\033[0;35m'
 B='\033[0;36m'
 
 #PROGRAM GLOBALS
+DEFAULTNAME="main"
 NAME=""
 FILE=""
 HEADERFILE=""
@@ -251,6 +252,7 @@ function checkArgs() {
         LANGUAGE="markdown"
         TOPCOMMENT="<!--"
         BOTTOMCOMMENT="--->"
+        DEFAULTNAME="README"
         shift
         ;;
       -n|--note)
@@ -259,6 +261,7 @@ function checkArgs() {
         COPYFILE="note.txt"
         LANGUAGE="note"
         SPACING=""
+        DEFAULTNAME="$(date +"%m-%d-%Y")"
         shift
         ;;
       -h|--help)
@@ -278,12 +281,9 @@ function checkArgs() {
       usage $R
   fi
   ARG="${ARGS[0]}"
-  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]] && [[ "$LANGUAGE" != "note" ]];
+  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
   then
-    NAME="main"
-  elif [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
-  then
-    NAME=$(date +"%m-%d-%Y")
+    NAME=$DEFAULTNAME
   else
     NAME="${POSITIONAL_ARGS[0]}" 
   fi
@@ -323,11 +323,11 @@ function buildBodyFile() {
     HEADER="${HEADER}\ndescribe(\"Tests for $NAME\", () => { "
   fi
   buildFile $FILE $PATHTOCOPY
-  echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
   if [[ "$LANGUAGE" == "bash" ]];
   then
     chmod +x "$FILE"
   fi
+  echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
 }
 
 function buildHeaderFile() {

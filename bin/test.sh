@@ -35,19 +35,29 @@ function deleteIfDirExists() {
 
 function testBuildAllValid() {
    echoC $O "Testing All Valid"
+   testWithName
+   testWithoutName
+}
+
+function testWithoutName() {
+   echoC $O "Without Name"
+   loopOptions
+}
+
+function testWithName() {
+   echoC $O "With Name"
+   loopOptions $FILENAME
+}
+
+function loopOptions() {
    for arg in "${OPTIONS[@]}"
    do
-      testProgram "-$arg" 
+      testProgram "-$arg" $1
    done
 }
 
 function testProgram() {
-   local testFile="$FILENAME"
-   if [[ $# == 2 ]];
-   then
-      testFile="$2"
-   fi
-   $PROGRAM "$1" "$testFile"
+   $PROGRAM "$1" "$2"
 }
 
 function echoC() {
