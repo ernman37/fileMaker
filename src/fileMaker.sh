@@ -39,6 +39,11 @@ PATHTOCOPY=""
 PATHTOHEADERCOPY=""
 LANGUAGE=""
 COMMENT=""
+PRESPACE=""
+SPACING="    "
+TOPCOMMENT=""
+BOTTOMCOMMENT=""
+TEST=0
 
 function main() {
   if [[ $# -gt 2 ]] || [[ $# -eq 0 ]];
@@ -68,6 +73,8 @@ function usage() {
   echoErr "  ${1}-t   | --typescript"
   echoErr "  ${1}-tt  | --typescriptTest"
   echoErr "  ${1}-m   | --markdown"
+  echoErr "  ${1}-n   | --note (.txt)"
+  echoErr "  ${1}-h   | --help" 
   exit 1
 }
 
@@ -82,6 +89,8 @@ function checkArgs() {
         COPYFILE="c.txt"
         LANGUAGE="C"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift 
         ;;
       -ch|--ch)
@@ -92,6 +101,8 @@ function checkArgs() {
         COPYHEADER="ch.txt"
         LANGUAGE="C"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift 
         ;;
       -C|--cpp)
@@ -100,6 +111,8 @@ function checkArgs() {
         COPYFILE="cpp.txt"
         LANGUAGE="C++"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -Ch|--cpph)
@@ -110,6 +123,8 @@ function checkArgs() {
         COPYHEADER="cpph.txt"
         LANGUAGE="C++"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -j|--java)
@@ -118,6 +133,8 @@ function checkArgs() {
         COPYFILE="java.txt"
         LANGUAGE="java"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -p|--python)
@@ -125,7 +142,8 @@ function checkArgs() {
         EXTENSTION="py"
         COPYFILE="python.txt"
         LANGUAGE="python"
-        COMMENT="#"
+        TOPCOMMENT="'''"
+        BOTTOMCOMMENT="'''"
         shift
         ;;
       -m|--makeFile)
@@ -141,43 +159,98 @@ function checkArgs() {
         COPYFILE="bash.txt"
         LANGUAGE="bash"
         COMMENT="#"
+        HEADER="#!/bin/bash\n"
         shift
         ;;
       -H|--html)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="html"
+        COPYFILE="html.txt"
+        LANGUAGE="html"
+        TOPCOMMENT="<!--"
+        BOTTOMCOMMENT="--->"
+        shift
         ;;
       -s|--css)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="css"
+        COPYFILE="css.txt"
+        LANGUAGE="css"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
         ;;
       -P|--php)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="php"
+        COPYFILE="php.txt"
+        LANGUAGE="php"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        HEADER="#!/bin/php\n<?php\n"
+        PRESPACE="  "
+        shift
         ;;
       -js|--javascript)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="js"
+        COPYFILE="javascript.txt"
+        LANGUAGE="javascript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
         ;;
       -jst|--javascriptTest)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="js"
+        COPYFILE="javascript.test.txt"
+        LANGUAGE="javascript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        TEST=1
+        shift
         ;;
       -t|--typescript)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="ts"
+        COPYFILE="javascript.txt"
+        LANGUAGE="typescript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
         ;;
-      -tt|--typescriptTest)
-        echoC $R "Not Implemented"
-        exit 1
-        ;;
-      -tt|--typescriptTest)
-        echoC $R "Not Implemented"
-        exit 1
+      -Tt|--typescriptTest)
+        ARGS+=("$1")
+        EXTENSTION="ts"
+        COPYFILE="javascript.test.txt"
+        LANGUAGE="typescript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        TEST=1
+        shift
         ;;
       -M|--markdown)
-        echoC $R "Not Implemented"
-        exit 1
+        ARGS+=("$1")
+        EXTENSTION="md"
+        COPYFILE="markdown.txt"
+        LANGUAGE="markdown"
+        TOPCOMMENT="<!--"
+        BOTTOMCOMMENT="--->"
+        shift
+        ;;
+      -n|--note)
+        ARGS+=("$1")
+        EXTENSTION="txt"
+        COPYFILE="note.txt"
+        LANGUAGE="note"
+        SPACING=""
+        shift
         ;;
       -h|--help)
         usage $O
@@ -196,9 +269,12 @@ function checkArgs() {
       usage $R
   fi
   ARG="${ARGS[0]}"
-  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
+  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]] && [[ "$LANGUAGE" != "note" ]];
   then
     NAME="main"
+  elif [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
+  then
+    NAME=$(date +"%m-%d-%Y")
   else
     NAME="${POSITIONAL_ARGS[0]}" 
   fi
@@ -208,6 +284,9 @@ function startBuildForFile() {
   if [[ "$LANGUAGE" == "make" ]];
   then
     FILE="Makefile"
+  elif [[ $TEST -eq 1 ]];
+  then 
+    FILE="$NAME.test.$EXTENSTION"
   else 
     FILE="$NAME.$EXTENSTION"
   fi
@@ -223,10 +302,6 @@ function startBuildForFile() {
 }
 
 function buildBodyFile() {
-  if [[ "$LANGUAGE" == "make" ]];
-  then
-    FILE="Makefile"
-  fi
   buildHeader $FILE
   if [[ "$HEADERFILE" != '' ]];
   then
@@ -234,6 +309,9 @@ function buildBodyFile() {
   elif [[ "$LANGUAGE" == 'java' ]];
   then
     HEADER="${HEADER}\nclass $NAME{"
+  elif [[ $TEST -eq 1 ]];
+  then
+    HEADER="${HEADER}\ndescribe(\"Tests for $NAME\", () => { "
   fi
   buildFile $FILE $PATHTOCOPY
   echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
@@ -259,18 +337,18 @@ function buildHeaderFile() {
 }
 
 function buildHeader() {
-  if [[ "$COMMENT" == " *" ]];
+  if [[ "$TOPCOMMENT" != "" ]];
   then
-    HEADER="${HEADER}/*\n"
+    HEADER="${HEADER}${PRESPACE}${TOPCOMMENT}\n"
   fi
-  HEADER="${HEADER}${COMMENT}   File: $1\n"
-  HEADER="${HEADER}${COMMENT}   Creator: $CREATOR\n"
-  HEADER="${HEADER}${COMMENT}   Created: $DATE\n"
-  HEADER="${HEADER}${COMMENT}   For: \n"
-  HEADER="${HEADER}${COMMENT}   Description:"
-  if [[ "$COMMENT" == " *" ]];
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}File: $1\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Creator: $CREATOR\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Created: $DATE\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}For: \n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Description:"
+  if [[ "$BOTTOMCOMMENT" != "" ]];
   then
-    HEADER="${HEADER}\n*/"
+    HEADER="${HEADER}\n${PRESPACE}${BOTTOMCOMMENT}"
   fi
 }
 
