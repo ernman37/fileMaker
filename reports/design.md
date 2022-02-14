@@ -16,11 +16,22 @@ This bash program is going to be able to make a handful of basic files for diffe
 OPTIONS:
 - c (c file)
 - C (c++ file)
-- h (header file, only for C and CPP)
+- ch (c header)
+- Ch (c++ header)
 - j (java file)
 - b (bash file)
 - p (python file)
 - m (Makefile) 
+- b (bash)
+- H (html)
+- s (css)
+- P (php)
+- js (javascript)
+   - jst (javascript test) 
+- t (typescript)
+   - tt (typescript test)
+- M (markdown)
+
 
 # Process
 **On-Entry**

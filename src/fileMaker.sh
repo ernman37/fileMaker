@@ -39,6 +39,11 @@ PATHTOCOPY=""
 PATHTOHEADERCOPY=""
 LANGUAGE=""
 COMMENT=""
+PRESPACE=""
+SPACING="    "
+TOPCOMMENT=""
+BOTTOMCOMMENT=""
+TEST=0
 
 function main() {
   if [[ $# -gt 2 ]] || [[ $# -eq 0 ]];
@@ -52,14 +57,24 @@ function main() {
 function usage() {
   echoErr "${1}[USAGE]: PROMPT$ fileMaker.sh -OPTION FILE_NAME"
   echoErr "${1}OPTIONS:"
-  echoErr "  ${1}-j  | --java"
-  echoErr "  ${1}-p  | --python"
-  echoErr "  ${1}-c  | --C"
-  echoErr "  ${1}-ch | --Ch"
-  echoErr "  ${1}-C  | --cpp"
-  echoErr "  ${1}-Ch | --cpph"
-  echoErr "  ${1}-m  | --makefile"
-  echoErr "  ${1}-b  | --bash"
+  echoErr "  ${1}-j   | --java"
+  echoErr "  ${1}-p   | --python"
+  echoErr "  ${1}-c   | --C"
+  echoErr "  ${1}-ch  | --Ch"
+  echoErr "  ${1}-C   | --cpp"
+  echoErr "  ${1}-Ch  | --cpph"
+  echoErr "  ${1}-m   | --makefile"
+  echoErr "  ${1}-b   | --bash"
+  echoErr "  ${1}-H   | --html"
+  echoErr "  ${1}-s   | --css"
+  echoErr "  ${1}-P   | --php"
+  echoErr "  ${1}-js  | --javascript"
+  echoErr "  ${1}-jst | --javascriptTest"
+  echoErr "  ${1}-t   | --typescript"
+  echoErr "  ${1}-tt  | --typescriptTest"
+  echoErr "  ${1}-m   | --markdown"
+  echoErr "  ${1}-n   | --note (.txt)"
+  echoErr "  ${1}-h   | --help" 
   exit 1
 }
 
@@ -74,6 +89,8 @@ function checkArgs() {
         COPYFILE="c.txt"
         LANGUAGE="C"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift 
         ;;
       -ch|--ch)
@@ -84,6 +101,8 @@ function checkArgs() {
         COPYHEADER="ch.txt"
         LANGUAGE="C"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift 
         ;;
       -C|--cpp)
@@ -92,6 +111,8 @@ function checkArgs() {
         COPYFILE="cpp.txt"
         LANGUAGE="C++"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -Ch|--cpph)
@@ -102,6 +123,8 @@ function checkArgs() {
         COPYHEADER="cpph.txt"
         LANGUAGE="C++"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -j|--java)
@@ -110,6 +133,8 @@ function checkArgs() {
         COPYFILE="java.txt"
         LANGUAGE="java"
         COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
         shift
         ;;
       -p|--python)
@@ -117,7 +142,8 @@ function checkArgs() {
         EXTENSTION="py"
         COPYFILE="python.txt"
         LANGUAGE="python"
-        COMMENT="#"
+        TOPCOMMENT="'''"
+        BOTTOMCOMMENT="'''"
         shift
         ;;
       -m|--makeFile)
@@ -133,6 +159,97 @@ function checkArgs() {
         COPYFILE="bash.txt"
         LANGUAGE="bash"
         COMMENT="#"
+        HEADER="#!/bin/bash\n"
+        shift
+        ;;
+      -H|--html)
+        ARGS+=("$1")
+        EXTENSTION="html"
+        COPYFILE="html.txt"
+        LANGUAGE="html"
+        TOPCOMMENT="<!--"
+        BOTTOMCOMMENT="--->"
+        shift
+        ;;
+      -s|--css)
+        ARGS+=("$1")
+        EXTENSTION="css"
+        COPYFILE="css.txt"
+        LANGUAGE="css"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
+        ;;
+      -P|--php)
+        ARGS+=("$1")
+        EXTENSTION="php"
+        COPYFILE="php.txt"
+        LANGUAGE="php"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        HEADER="#!/bin/php\n<?php\n"
+        PRESPACE="  "
+        shift
+        ;;
+      -js|--javascript)
+        ARGS+=("$1")
+        EXTENSTION="js"
+        COPYFILE="javascript.txt"
+        LANGUAGE="javascript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
+        ;;
+      -jst|--javascriptTest)
+        ARGS+=("$1")
+        EXTENSTION="js"
+        COPYFILE="javascript.test.txt"
+        LANGUAGE="javascript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        TEST=1
+        shift
+        ;;
+      -t|--typescript)
+        ARGS+=("$1")
+        EXTENSTION="ts"
+        COPYFILE="javascript.txt"
+        LANGUAGE="typescript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        shift
+        ;;
+      -Tt|--typescriptTest)
+        ARGS+=("$1")
+        EXTENSTION="ts"
+        COPYFILE="javascript.test.txt"
+        LANGUAGE="typescript"
+        COMMENT=" *"
+        TOPCOMMENT="/*"
+        BOTTOMCOMMENT="*/"
+        TEST=1
+        shift
+        ;;
+      -M|--markdown)
+        ARGS+=("$1")
+        EXTENSTION="md"
+        COPYFILE="markdown.txt"
+        LANGUAGE="markdown"
+        TOPCOMMENT="<!--"
+        BOTTOMCOMMENT="--->"
+        shift
+        ;;
+      -n|--note)
+        ARGS+=("$1")
+        EXTENSTION="txt"
+        COPYFILE="note.txt"
+        LANGUAGE="note"
+        SPACING=""
         shift
         ;;
       -h|--help)
@@ -152,9 +269,12 @@ function checkArgs() {
       usage $R
   fi
   ARG="${ARGS[0]}"
-  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
+  if [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]] && [[ "$LANGUAGE" != "note" ]];
   then
     NAME="main"
+  elif [[ ${#POSITIONAL_ARGS[@]} -eq 0 ]];
+  then
+    NAME=$(date +"%m-%d-%Y")
   else
     NAME="${POSITIONAL_ARGS[0]}" 
   fi
@@ -164,6 +284,9 @@ function startBuildForFile() {
   if [[ "$LANGUAGE" == "make" ]];
   then
     FILE="Makefile"
+  elif [[ $TEST -eq 1 ]];
+  then 
+    FILE="$NAME.test.$EXTENSTION"
   else 
     FILE="$NAME.$EXTENSTION"
   fi
@@ -179,10 +302,6 @@ function startBuildForFile() {
 }
 
 function buildBodyFile() {
-  if [[ "$LANGUAGE" == "make" ]];
-  then
-    FILE="Makefile"
-  fi
   buildHeader $FILE
   if [[ "$HEADERFILE" != '' ]];
   then
@@ -190,9 +309,16 @@ function buildBodyFile() {
   elif [[ "$LANGUAGE" == 'java' ]];
   then
     HEADER="${HEADER}\nclass $NAME{"
+  elif [[ $TEST -eq 1 ]];
+  then
+    HEADER="${HEADER}\ndescribe(\"Tests for $NAME\", () => { "
   fi
   buildFile $FILE $PATHTOCOPY
   echoC $G "Created ${B}$LANGUAGE${G} file: ${P}$FILE"
+  if [[ "$LANGUAGE" == "bash" ]];
+  then
+    chmod +x "$FILE"
+  fi
 }
 
 function buildHeaderFile() {
@@ -200,7 +326,7 @@ function buildHeaderFile() {
   checkForFile $HEADERFILE
   buildHeader $HEADERFILE
   local name=$(printf '%s\n' "$NAME" | awk '{ print toupper($0) }')
-  local ext=$(printf '%s\n' "$EXTENSTION" | awk '{ print toupper($0) }')
+  local ext=$(printf '%s\n' "$HEADEREXTENSTION" | awk '{ print toupper($0) }')
   HEADER="${HEADER}\n#ifndef ${name}_${ext}\n"
   HEADER="${HEADER}#define ${name}_${ext}"
   buildFile $HEADERFILE $PATHTOHEADERCOPY
@@ -211,18 +337,18 @@ function buildHeaderFile() {
 }
 
 function buildHeader() {
-  if [[ "$COMMENT" == " *" ]];
+  if [[ "$TOPCOMMENT" != "" ]];
   then
-    HEADER="${HEADER}/*\n"
+    HEADER="${HEADER}${PRESPACE}${TOPCOMMENT}\n"
   fi
-  HEADER="${HEADER}${COMMENT}   File: $1\n"
-  HEADER="${HEADER}${COMMENT}   Creator: $CREATOR\n"
-  HEADER="${HEADER}${COMMENT}   Created: $DATE\n"
-  HEADER="${HEADER}${COMMENT}   For: \n"
-  HEADER="${HEADER}${COMMENT}   Description:"
-  if [[ "$COMMENT" == " *" ]];
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}File: $1\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Creator: $CREATOR\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Created: $DATE\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}For: \n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Description:"
+  if [[ "$BOTTOMCOMMENT" != "" ]];
   then
-    HEADER="${HEADER}\n*/"
+    HEADER="${HEADER}\n${PRESPACE}${BOTTOMCOMMENT}"
   fi
 }
 
@@ -255,13 +381,12 @@ then
   then
     echoErr "Cannot find ${P} copies folder"
     echoErr "Current copies path: ${P}$COPIESPATH"
+    exit 1
   fi
 else
   echoErr "Cannot find ${P}config.sh"
   echoErr "Current config path: ${P}$CONFIG"
   exit 1
 fi
-
-
 
 main $@
