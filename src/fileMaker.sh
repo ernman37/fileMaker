@@ -72,6 +72,7 @@ function usage() {
   echoErr "  ${1}-jst | --javascriptTest"
   echoErr "  ${1}-t   | --typescript"
   echoErr "  ${1}-tt  | --typescriptTest"
+  echoErr "  ${1}-r   | --ruby"
   echoErr "  ${1}-m   | --markdown"
   echoErr "  ${1}-n   | --note (.txt)"
   echoErr "  ${1}-h   | --help" 
@@ -233,6 +234,14 @@ function checkArgs() {
         TOPCOMMENT="/*"
         BOTTOMCOMMENT="*/"
         TEST=1
+        shift
+        ;;
+      -r|--ruby)
+        ARGS+=("$1")
+        EXTENSTION="rb"
+        COPYFILE="ruby.txt"
+        LANGUAGE="ruby"
+        COMMENT="#"
         shift
         ;;
       -M|--markdown)
