@@ -235,6 +235,14 @@ function checkArgs() {
         TEST=1
         shift
         ;;
+      -r|--ruby)
+        ARGS+=("$1")
+        EXTENSTION="rb"
+        COPYFILE="ruby.txt"
+        LANGUAGE="ruby"
+        COMMENT="#"
+        shift
+        ;;
       -M|--markdown)
         ARGS+=("$1")
         EXTENSTION="md"
