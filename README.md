@@ -4,11 +4,24 @@ Create Various *"Hello World!"* programs for various languages
 
 Supported Languages:
 - C
+   - C Header and Body
 - C++
+   - C++ Header and Body
 - Java
 - Python
 - Makefile
 - Bash
+- HTML
+- CSS
+- Javascript
+   - JS Jest 
+- Typescript
+   - TS Jest
+- Markdown
+- Ruby
+- PHP
+- Note (.txt)
+
 
 ## Set-Up
 1. Change *USER* variables in `src/config.sh` 
