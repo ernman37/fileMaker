@@ -1,3 +1,4 @@
+
 #Colors
 NOCOLOR='\033[0m'
 RED='\033[0;31m'
@@ -20,12 +21,12 @@ function main() {
    echoColor $GREEN "Hello World!"
 }
 
-function echoColor() {
+function echoC() {
    echo -e "${1}$2${NOCOLOR}"
 }
 
 function echoErr() {
-   echoC $RED $1
+   echoC $RED $1 >&2
 }
 
 main
