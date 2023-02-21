@@ -51,6 +51,7 @@ function main() {
   then
     usage $R
   fi
+  setUp
   checkArgs $@
   startBuildForFile
 }
@@ -395,7 +396,7 @@ function buildHeader() {
   then
     HEADER="${HEADER}\n${PRESPACE}${BOTTOMCOMMENT}"
   fi
-  if [[ $LANGUAGE -eq "bash" ]];
+  if [[ $LANGUAGE == "bash" ]];
   then
     HEADER="${HEADER}\n\nLOGFILE=\"$NAME.log\""
   fi
@@ -412,6 +413,7 @@ function makeProjectDir() {
   mkdir $NAME
   echoC $G "Created ${B}$LANGUAGE${G}: ${P}$NAME/"
   cd $NAME
+  main '-M'
   mkdir 'src'
   echoC $G "Created ${B}$LANGUAGE${G}: ${P}src/"
   mkdir 'bin'
@@ -424,8 +426,6 @@ function makeProjectDir() {
   main '-b' 'test'
   cd ../bin
   main '-b' 'run'
-  cd ..
-  main '-M'
   exit 0
 }
 
