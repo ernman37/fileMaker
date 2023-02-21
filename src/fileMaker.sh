@@ -76,6 +76,7 @@ function usage() {
   echoErr "  ${1}-r   | --ruby"
   echoErr "  ${1}-M   | --markdown"
   echoErr "  ${1}-n   | --note (.txt)"
+  echoErr "  ${1}-d   | --dir (project dir)"
   echoErr "  ${1}-h   | --help" 
   exit 1
 }
@@ -264,6 +265,15 @@ function checkArgs() {
         DEFAULTNAME="$(date +"%m-%d-%Y")"
         shift
         ;;
+      -d|--dir)
+        ARGS+=("$1")
+        EXTENSTION=""
+        COPYFILE=""
+        LANGUAGE="directory"
+        SPACING=""
+        DEFAULTNAME="newProject"
+        shift
+        ;;
       -h|--help)
         usage $O
         ;;
@@ -296,6 +306,9 @@ function startBuildForFile() {
   elif [[ $TEST -eq 1 ]];
   then 
     FILE="$NAME.test.$EXTENSTION"
+  elif [[ "$LANGUAGE" == "directory" ]];
+  then 
+    makeProjectDir 
   else 
     FILE="$NAME.$EXTENSTION"
   fi
@@ -359,12 +372,47 @@ function buildHeader() {
   then
     HEADER="${HEADER}\n${PRESPACE}${BOTTOMCOMMENT}"
   fi
+  if [[ $LANGUAGE -eq "bash" ]];
+  then
+    HEADER="${HEADER}\n\nLOGFILE=\"$NAME.log\""
+  fi
 }
 
 function buildFile() {
   touch "$1"
   echo -e "$HEADER" > "$1"
   cat "$2" >> "$1"
+}
+
+function makeProjectDir() {
+  checkForFile $NAME
+  mkdir $NAME
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}$NAME"
+  cd $NAME
+  mkdir 'src'
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}src"
+  mkdir 'bin'
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}bin"
+  mkdir 'reports'
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}reports"
+  mkdir 'tests'
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}tests"
+  cd tests
+  main '-b' 'test'
+  cd ../bin
+  main '-b' 'run'
+  cd ..
+  main '-M'
+  exit 0
+}
+
+function checkForDir() {
+  checkForFile $NAME
+  if [ -d "$NAME" ]; 
+  then
+    echoErr "${P}$NAME${R} already exists"
+    exit 1
+  fi
 }
 
 function checkForFile() {

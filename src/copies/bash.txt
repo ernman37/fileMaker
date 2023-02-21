@@ -18,15 +18,21 @@ LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 
 function main() {
-   echoColor $GREEN "Hello World!"
+   echoC $GREEN "Hello World!"
 }
 
 function echoC() {
    echo -e "${1}$2${NOCOLOR}"
+   logMsg "$2"
 }
 
 function echoErr() {
-   echoC $RED $1 >&2
+   echoC $RED "$1" >&2
+   logMsg "$1"
+}
+
+function logMsg() {
+   echo "$1" >> $LOGFILE
 }
 
 main
