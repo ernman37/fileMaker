@@ -55,6 +55,28 @@ function main() {
   startBuildForFile
 }
 
+function setUp(){
+  DEFAULTNAME="main"
+  NAME=""
+  FILE=""
+  HEADERFILE=""
+  ARG=""
+  HEADER=""
+  EXTENSTION=""
+  HEADEREXTENSTION=""
+  COPYFILE=""
+  COPYHEADER=""
+  PATHTOCOPY=""
+  PATHTOHEADERCOPY=""
+  LANGUAGE=""
+  COMMENT=""
+  PRESPACE=""
+  SPACING="    "
+  TOPCOMMENT=""
+  BOTTOMCOMMENT=""
+  TEST=0
+}
+
 function usage() {
   echoErr "${1}[USAGE]: PROMPT$ fileMaker.sh -OPTION FILE_NAME"
   echoErr "${1}OPTIONS:"
@@ -163,6 +185,7 @@ function checkArgs() {
         LANGUAGE="bash"
         COMMENT="#"
         HEADER="#!/bin/bash\n"
+        SPACING="   "
         shift
         ;;
       -H|--html)
@@ -385,18 +408,18 @@ function buildFile() {
 }
 
 function makeProjectDir() {
-  checkForFile $NAME
+  checkForDir $NAME
   mkdir $NAME
-  echoC $G "Created ${B}$LANGUAGE${G}: ${P}$NAME"
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}$NAME/"
   cd $NAME
   mkdir 'src'
-  echoC $G "Created ${B}$LANGUAGE${G}: ${P}src"
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}src/"
   mkdir 'bin'
-  echoC $G "Created ${B}$LANGUAGE${G}: ${P}bin"
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}bin/"
   mkdir 'reports'
-  echoC $G "Created ${B}$LANGUAGE${G}: ${P}reports"
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}reports/"
   mkdir 'tests'
-  echoC $G "Created ${B}$LANGUAGE${G}: ${P}tests"
+  echoC $G "Created ${B}$LANGUAGE${G}: ${P}tests/"
   cd tests
   main '-b' 'test'
   cd ../bin
@@ -410,7 +433,7 @@ function checkForDir() {
   checkForFile $NAME
   if [ -d "$NAME" ]; 
   then
-    echoErr "${P}$NAME${R} already exists"
+    echoErr "${P}$NAME/${R} already exists"
     exit 1
   fi
 }
