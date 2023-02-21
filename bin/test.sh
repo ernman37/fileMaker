@@ -15,7 +15,7 @@ B='\033[0;36m'
 PROGRAM="/Users/rionduckworth/codeProjects/bash/fileMaker/src/fileMaker.sh"
 FILENAME="example"
 TESTDIR="testDir"
-OPTIONS=( "ch" "Ch" "c" "C" "j" "p" "m" "b" "H" "s" "js" "jst" "t" "Tt" "M" "r" "P" "n" )
+OPTIONS=( "ch" "Ch" "c" "C" "j" "p" "m" "b" "H" "s" "js" "jst" "t" "Tt" "M" "r" "P" "n" "d" )
 
 function main() {
    deleteIfDirExists
