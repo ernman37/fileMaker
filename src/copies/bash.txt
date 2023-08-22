@@ -28,7 +28,6 @@ function echoC() {
 
 function echoErr() {
    echoC $RED "$1" >&2
-   logMsg "$1"
 }
 
 function logMsg() {
