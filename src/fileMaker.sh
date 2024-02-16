@@ -45,11 +45,20 @@ SPACING="    "
 TOPCOMMENT=""
 BOTTOMCOMMENT=""
 TEST=0
+GOT_COMMENTS="0"
+FOR_COMMENT=""
+DESCRIPTION_COMMENT=""
 
 function main() {
   if [[ $# -gt 2 ]] || [[ $# -eq 0 ]];
   then
     usage $R
+  fi
+  if [[ "$GOT_COMMENTS" == "0" ]];
+  then
+    GOT_COMMENTS="1"
+    read -p "For: " FOR_COMMENT
+    read -p "Description: " DESCRIPTION_COMMENT
   fi
   setUp
   checkArgs $@
@@ -390,8 +399,8 @@ function buildHeader() {
   HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}File: $1\n"
   HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Creator: $CREATOR\n"
   HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Created: $DATE\n"
-  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}For: \n"
-  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Description:"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}For: $FOR_COMMENT\n"
+  HEADER="${HEADER}${PRESPACE}${COMMENT}${SPACING}Description $DESCRIPTION_COMMENT:"
   if [[ "$BOTTOMCOMMENT" != "" ]];
   then
     HEADER="${HEADER}\n${PRESPACE}${BOTTOMCOMMENT}"
